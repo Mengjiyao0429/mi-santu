@@ -1,533 +1,693 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>个人信息展示</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
-<!-- Tailwind 配置 -->
-<script>
-tailwind.config = {
-theme: {
-extend: {
-colors: {
-primary: '#165DFF',
-secondary: '#36CFC9',
-accent: '#722ED1',
-neutral: '#F2F3F5',
-'neutral-dark': '#4E5969',
-'neutral-light': '#C9CDD4',
-},
-fontFamily: {
-inter: ['Inter', 'system-ui', 'sans-serif'],
-},
-maxWidth: {
-'screen-3xl': '2000px', // 新增更大容器宽度
-},
-fontSize: {
-'xl': '1.375rem', // 增加基础字体大小
-'2xl': '1.75rem',
-'3xl': '2.25rem',
-'4xl': '3rem',
-},
-},
-}
-}
-</script>
-
-<style type="text/tailwindcss">
-@layer utilities {
-.content-auto {
-content-visibility: auto;
-}
-.text-shadow {
-text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.transition-custom {
-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.card-hover {
-@apply hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
-}
-.grid-auto-fit {
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-}
-.iframe-container {
-width: 100%;
-height: 600px; /* 增加iframe高度 */
-overflow: auto;
-}
-}
-</style>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>车载降温模拟控制界面</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            danger: '#F87272',
+            warning: '#FBBD23',
+            info: '#3ABFF8',
+            dark: '#1E293B',
+            light: '#F8FAFC'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .text-center-all {
+        text-align: center;
+        display: block;
+        width: 100%;
+      }
+      .text-lg-xl {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+      }
+      /* 新增导航栏滚动样式 */
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s ease; /* 平滑过渡 */
+      }
+      .header-scroll {
+        box-shadow: 0 4px 12px rgba(22, 93, 255, 0.15); /* 滚动时阴影 */
+        background-color: rgba(22, 93, 255, 0.75); /* 增加透明度 */
+      }
+      .header-static {
+        box-shadow: none;
+        background-color: rgba(22, 93, 255, 0.95); /* 顶部时几乎不透明 */
+      }
+    }
+  </style>
 </head>
+<body class="bg-gray-100 font-sans text-dark">
+  <!-- 顶部导航栏（修改为header-static初始状态，上划时显示透明效果） -->
+  <header class="bg-primary text-white shadow-lg sticky-header header-static" data-scroll="static">
+    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center mb-2 md:mb-0">
+        <i class="fa fa-thermometer-half text-3xl mr-3 text-white/90"></i>
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-white">队名</h1>
+          <p class="text-xs text-white/80 mt-1">口号</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:flex items-center text-sm">
+          <i class="fa fa-clock-o mr-1"></i>
+          <span>当前时间：</span>
+          <span id="current-time">00:00:00</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<body class="font-inter bg-gray-50 text-gray-800">
-<!-- 导航栏 -->
-<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm transition-all duration-300">
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="flex justify-between items-center py-3 md:py-4"> <!-- 减小垂直间距 -->
-<div class="flex items-center">
-<div class="text-primary font-bold text-xl">个人信息</div>
-</div>
-<nav class="hidden md:flex space-x-6 md:space-x-8"> <!-- 优化间距 -->
-<a href="#about" class="text-gray-600 hover:text-primary transition-custom font-medium">关于我</a>
-<a href="#skills" class="text-gray-600 hover:text-primary transition-custom font-medium">技能</a>
-<a href="#experience" class="text-gray-600 hover:text-primary transition-custom font-medium">工作经验</a>
-<a href="#projects" class="text-gray-600 hover:text-primary transition-custom font-medium">项目经历</a>
-<a href="#contact" class="text-gray-600 hover:text-primary transition-custom font-medium">联系方式</a>
-<a href="#maxkb" class="text-gray-600 hover:text-primary transition-custom font-medium">MaxKB</a> <!-- 新增导航项 -->
-</nav>
-<button class="md:hidden text-gray-600 focus:outline-none" id="mobile-menu-button">
-<i class="fa fa-bars text-xl"></i>
-</button>
-</div>
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      
+      <!-- 左侧信息面板 -->
+      <div class="lg:w-1/4 space-y-6">
+        <!-- 当前温度卡片 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+          <div class="flex justify-between items-start mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">当前温度</h2>
+            <span class="bg-primary/10 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">可调节</span>
+          </div>
+          <div class="flex items-center justify-center">
+            <div class="text-center">
+              <div class="flex items-baseline justify-center">
+                <span id="current-temp" class="text-5xl font-bold text-primary">28</span>
+                <span class="text-2xl text-gray-500 ml-1">°C</span>
+              </div>
+              <div class="mt-4">
+                <!-- 修改温度滑块的最大值为75 -->
+                <input type="range" id="current-temp-slider" min="16" max="75" value="28" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
 
-<!-- 移动端菜单 -->
-<div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
-<div class="max-w-screen-3xl mx-auto px-4 py-3 space-y-3"> <!-- 扩大容器宽度 -->
-<a href="#about" class="block text-gray-600 hover:text-primary py-2 transition-custom">关于我</a>
-<a href="#skills" class="block text-gray-600 hover:text-primary py-2 transition-custom">技能</a>
-<a href="#experience" class="block text-gray-600 hover:text-primary py-2 transition-custom">工作经验</a>
-<a href="#projects" class="block text-gray-600 hover:text-primary py-2 transition-custom">项目经历</a>
-<a href="#contact" class="block text-gray-600 hover:text-primary py-2 transition-custom">联系方式</a>
-<a href="#maxkb" class="block text-gray-600 hover:text-primary py-2 transition-custom">MaxKB</a> 
-</div>
-</div>
-</div>
-</header>
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>16°C</span>
+                  <span>75°C</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 降温方式卡片 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+          <h2 class="text-lg font-semibold text-center text-gray-700 mb-4">降温方式</h2>
+          <div class="space-y-4">
+            <div class="flex items-center p-3 rounded-lg border border-gray-100 bg-primary/5">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                <i class="fa fa-snowflake-o text-primary"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-medium text-gray-900">水冷降温</h3>
+                <p class="text-sm text-gray-500">1分钟0.2°C</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center p-3 rounded-lg border border-gray-100 bg-primary/5">
+              <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center mr-3">
+                <i class="fa fa-microchip text-secondary"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-medium text-gray-900">半导体降温</h3>
+                <p class="text-sm text-gray-500">1分钟0.5°C</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 空间设置卡片 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+          <h2 class="text-lg font-semibold text-center text-gray-700 mb-4">空间设计</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">车载空间</label>
+              <div class="flex items-center">
+                <input type="range" id="space-size" min="1" max="5" step="0.1" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                <span id="space-value" class="ml-3 text-sm font-medium text-gray-900">3.0m³</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">可调节范围：1.0-5.0m³</p>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">目标温度</label>
+              <div class="flex items-center">
+                <input type="range" id="target-temp" min="16" max="35" step="1" value="29" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                <span id="target-temp-value" class="ml-3 text-sm font-medium text-gray-900">29°C</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">可调节范围：16-35°C</p>
+            </div>
+            
+            <button id="start-simulation" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center">
+              <i class="fa fa-play-circle mr-2"></i> 开始仿真
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 右侧温度控制和图表区域 -->
+      <div class="lg:w-3/4 space-y-6">
+        <!-- 温度控制面板 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover relative">
+          <div class="flex justify-between items-center mb-6">
+            <!-- 修改后的标题，增加了 text-center-all 和 text-lg-xl 类 -->
+            <h2 class="text-lg-xl font-bold text-center text-gray-700 mb-2">温度控制仿真</h2>
+            <div class="flex space-x-2">
+              
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <div class="text-sm text-gray-500 mb-1">当前降温速率</div>
+              <div class="text-2xl font-bold text-primary" id="cooling-rate">0.2°C/分钟</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <div class="text-sm text-gray-500 mb-1">预计到达时间</div>
+              <div class="text-2xl font-bold text-secondary" id="estimated-time">5分钟</div>
+            </div>
+          </div>
+          
+          <!-- 温度图表 -->
+          <div class="h-[350px] relative">
+            <canvas id="temperature-chart"></canvas>
+            <!-- 图表滚动控制 -->
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden" id="scroll-left">
+              <button class="bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md transition-all duration-200">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+            </div>
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden" id="scroll-right">
+              <button class="bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md transition-all duration-200">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 实时状态面板 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-center text-gray-700">系统状态</h2>
+            <span id="system-status" class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              <i class="fa fa-check-circle mr-1"></i> 运行中
+            </span>
+          </div>
+          
+          <!-- 可滚动表格容器 -->
+          <div class="relative">
+            <div class="overflow-x-auto scrollbar-hide" id="table-container">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 sticky top-0">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">温度</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">降温方式</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">水冷降温</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">半导体降温</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="status-table">
+                  <!-- 动态生成的状态数据 -->
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- 表格滚动控制 -->
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden" id="table-scroll-left">
+              <button class="bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md transition-all duration-200">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+            </div>
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden" id="table-scroll-right">
+              <button class="bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md transition-all duration-200">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-<main>
-<!-- 英雄区域 -->
-<section class="bg-gradient-to-br from-primary/90 to-primary py-12 md:py-16 lg:py-20"> <!-- 优化垂直间距 -->
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="flex flex-col md:flex-row items-center">
-<div class="w-full md:w-1/4 mb-6 md:mb-0"> <!-- 调整比例 -->
-<div class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto md:mx-0"> <!-- 优化头像尺寸 -->
-<img src="/fujian/santu.jpg" alt="个人头像" class="w-full h-full object-cover rounded-full shadow-2xl border-4 border-white/20">
-<div class="absolute -bottom-3 -right-3 bg-secondary text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
-<i class="fa fa-code text-lg"></i>
-</div>
-</div>
-</div>
-<div class="w-full md:w-3/4 text-center md:text-left">
-<h1 class="text-[clamp(1.8rem,4vw,3rem)] font-bold text-white leading-tight text-shadow mb-3"> <!-- 优化字体大小 -->
-你好，我是<span class="text-secondary">小蒙</span>
-</h1>
-<p class="text-[clamp(1rem,1.8vw,1.25rem)] text-white/90 mb-6 max-w-3xl mx-auto md:mx-0"> <!-- 优化字体大小 -->
-全栈开发者 | 热衷于创造实用且美观的数字产品 | NWNU计科专业
-</p>
-<div class="flex flex-wrap justify-center md:justify-start gap-3"> <!-- 优化间距 -->
-<a href="#contact" class="bg-white text-primary hover:bg-gray-100 px-5 py-2.5 rounded-full font-medium shadow-lg hover:shadow-xl transition-custom flex items-center">
-<i class="fa fa-envelope-o mr-2"></i> 联系我
-</a>
-<a href="#projects" class="bg-transparent border-2 border-white text-white hover:bg-white/10 px-5 py-2.5 rounded-full font-medium transition-custom flex items-center">
-<i class="fa fa-briefcase mr-2"></i> 查看项目
-</a>
-</div>
-</div>
-</div>
-</div>
-</section>
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <p class="text-sm text-gray-400">© 2025 无界智研 参赛团队.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
 
-<!-- 关于我 -->
-<section id="about" class="py-12 md:py-16 bg-white"> <!-- 优化垂直间距 -->
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
-<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">关于我</h2> <!-- 优化字体大小 -->
-<div class="w-20 h-1 bg-primary mx-auto"></div>
-</div>
+  <script>
+    // 新增导航栏滚动监听
+    const header = document.querySelector('header');
+    let lastScrollY = 0;
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center"> <!-- 优化网格和间距 -->
-<div class="order-2 lg:order-1">
-<h3 class="text-xl font-semibold text-gray-800 mb-3">全栈开发者，专注于创造优质用户体验</h3>
-<p class="text-gray-600 mb-3 leading-relaxed">
-我是一名拥有浓厚兴趣的全栈开发者，擅长前后端技术栈。我热衷于将复杂问题简化为优雅、直观的解决方案。
-</p>
-<p class="text-gray-600 mb-5 leading-relaxed">
-我相信优秀的产品不仅要功能强大，还要美观易用。我注重代码质量和用户体验，致力于创造既实用又具有视觉吸引力的数字产品。
-</p>
+    window.addEventListener('scroll', function() {
+      const scrollY = window.scrollY || window.pageYOffset;
+      
+      // 当页面在顶部时，导航栏完全不透明
+      if (scrollY === 0) {
+        header.classList.remove('header-scroll');
+        header.classList.add('header-static');
+      } else {
+        // 页面滚动时，导航栏半透明
+        header.classList.remove('header-static');
+        header.classList.add('header-scroll');
+      }
 
-<div class="grid grid-cols-2 gap-3 mb-6"> <!-- 优化网格和间距 -->
-<div class="flex items-center">
-<i class="fa fa-calendar text-primary mr-3 text-lg"></i>
-<span>2025年5月</span>
-</div>
-<div class="flex items-center">
-<i class="fa fa-map-marker text-primary mr-3 text-lg"></i>
-<span>甘肃.兰州</span>
-</div>
-<div class="flex items-center">
-<i class="fa fa-envelope text-primary mr-3 text-lg"></i>
-<span>2739904006@qq.com</span>
-</div>
-<div class="flex items-center">
-<i class="fa fa-phone text-primary mr-3 text-lg"></i>
-<span>+86 18794875212</span>
-</div>
-</div>
+      lastScrollY = scrollY;
+    });
 
-<div class="flex flex-wrap gap-3"> <!-- 优化间距 -->
-<a href="#" class="bg-[#1877F2] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
-<i class="fa fa-facebook"></i>
-</a>
-<a href="#" class="bg-[#1DA1F2] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
-<i class="fa fa-twitter"></i>
-</a>
-<a href="#" class="bg-[#0A66C2] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
-<i class="fa fa-linkedin"></i>
-</a>
-<a href="#" class="bg-[#333333] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
-<i class="fa fa-github"></i>
-</a>
-</div>
-</div>
+    // 初始化变量
+    let currentTemp = 28;
+    let targetTemp = 29;
+    let spaceSize = 3.0;
+    let simulationRunning = false;
+    let simulationData = []; // 存储所有模拟数据
+    let chartData = []; // 存储图表数据
+    let statusCounter = 0;
+    let startTime = null;
+    const UPDATE_INTERVAL = 60000; // 60秒更新一次
+    
+    // 更新时间显示
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      document.getElementById('current-time').textContent = timeString;
+    }
+    
+    // 更新温度显示
+    function updateTemperatureDisplay() {
+      document.getElementById('current-temp').textContent = currentTemp.toFixed(1);
+      
+      // 计算降温速率
+      let coolingRate = 0;
+      let waterCoolingRate = 0;
+      let semiconductorCoolingRate = 0;
+      
+      // 根据温度决定启用的降温方式
+      if (currentTemp >= 35) {
+        waterCoolingRate = 0.1; // 30秒降温0.1°C
+        semiconductorCoolingRate = 0.25; // 30秒降温0.25°C
+        coolingRate = waterCoolingRate + semiconductorCoolingRate;
+      } else if (currentTemp > targetTemp) {
+        waterCoolingRate = 0.1; // 30秒降温0.1°C
+        coolingRate = waterCoolingRate;
+      }
+      
+      // 更新UI
+      document.getElementById('cooling-rate').textContent = (coolingRate * 2).toFixed(1) + '°C/分钟';
+      
+      // 计算预计到达时间
+      const timeLeft = coolingRate > 0 ? (currentTemp - targetTemp) / coolingRate * 30 : 0;
+      document.getElementById('estimated-time').textContent = 
+        timeLeft > 0 ? Math.ceil(timeLeft / 60).toFixed(0) + '分钟' : '已达到';
+      
+      return { coolingRate, waterCoolingRate, semiconductorCoolingRate };
+    }
+    
+    // 初始化温度图表
+    const ctx = document.getElementById('temperature-chart').getContext('2d');
+    const temperatureChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: '温度变化 (°C)',
+          data: [],
+          borderColor: '#165DFF',
+          backgroundColor: 'rgba(22, 93, 255, 0.1)',
+          tension: 0.4,
+          fill: true
+        }, {
+          label: '目标温度 (°C)',
+          data: [],
+          borderColor: '#36D399',
+          borderDash: [5, 5],
+          backgroundColor: 'transparent',
+          tension: 0.1,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            // 修改Y轴最大刻度为75
+            min: Math.min(15, targetTemp - 5),
+            max: Math.max(75, currentTemp + 5),
+            ticks: {
+              stepSize: 2
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        },
+        animation: {
+          duration: 500,
+          easing: 'easeOutQuart'
+        }
+      }
+    });
+    
+    // 更新状态表格
+    function updateStatusTable() {
+      const statusTable = document.getElementById('status-table');
+      statusTable.innerHTML = '';
+      
+      simulationData.forEach((data, index) => {
+        const newRow = document.createElement('tr');
+        newRow.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+        
+        // 添加时间单元格
+        const timeCell = document.createElement('td');
+        timeCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+        timeCell.textContent = data.time;
+        newRow.appendChild(timeCell);
+        
+        // 添加温度单元格
+        const tempCell = document.createElement('td');
+        tempCell.className = 'px-6 py-4 whitespace-nowrap text-sm font-medium';
+        tempCell.textContent = data.temp.toFixed(1) + '°C';
+        tempCell.className += data.temp > targetTemp ? ' text-danger' : ' text-secondary';
+        newRow.appendChild(tempCell);
+        
+        // 添加降温方式单元格
+        const methodCell = document.createElement('td');
+        methodCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+        methodCell.textContent = data.method;
+        newRow.appendChild(methodCell);
+        
+        // 添加水冷降温单元格
+        const waterCoolingCell = document.createElement('td');
+        waterCoolingCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+        waterCoolingCell.textContent = data.waterCooling > 0 ? data.waterCooling.toFixed(1) + '°C/分钟' : '-';
+        newRow.appendChild(waterCoolingCell);
+        
+        // 添加半导体降温单元格
+        const semiconductorCoolingCell = document.createElement('td');
+        semiconductorCoolingCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+        semiconductorCoolingCell.textContent = data.semiconductorCooling > 0 ? data.semiconductorCooling.toFixed(1) + '°C/分钟' : '-';
+        newRow.appendChild(semiconductorCoolingCell);
+        
+        statusTable.appendChild(newRow);
+      });
+      
+      // 显示/隐藏表格滚动按钮
+      const tableContainer = document.getElementById('table-container');
+      const tableScrollLeft = document.getElementById('table-scroll-left');
+      const tableScrollRight = document.getElementById('table-scroll-right');
+      
+      if (tableContainer.scrollWidth > tableContainer.clientWidth) {
+        tableScrollRight.classList.remove('hidden');
+      } else {
+        tableScrollLeft.classList.add('hidden');
+        tableScrollRight.classList.add('hidden');
+      }
+    }
+    
+    // 格式化时间为 MM:SS
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // 生成所有模拟数据
+    function generateSimulationData() {
+      simulationData = [];
+      chartData = [];
+      
+      let temp = currentTemp;
+      let time = 0;
+      let steps = 0;
+      
+      // 计算空间影响因子
+      const spaceFactor = 1 + (spaceSize - 3) * 0.1;
+      
+      // 添加初始状态
+      simulationData.push({
+        time: formatTime(time),
+        temp: temp,
+        method: temp > targetTemp ? '水冷' : '无',
+        waterCooling: temp > targetTemp ? 0.2 : 0,
+        semiconductorCooling: 0
+      });
+      
+      chartData.push({
+        time: formatTime(time),
+        temp: temp
+      });
+      
+      // 生成直到达到目标温度的所有数据（每分钟一个数据点）
+      while (temp > targetTemp && steps < 200) { // 限制最大步数防止无限循环
+        // 计算当前降温速率
+        let coolingRate = 0;
+        let waterCoolingRate = 0;
+        let semiconductorCoolingRate = 0;
+        let method = '';
+        
+        if (temp >= 35) {
+          waterCoolingRate = 0.2; // 每分钟降温0.2°C
+          semiconductorCoolingRate = 0.5; // 每分钟降温0.5°C
+          coolingRate = waterCoolingRate + semiconductorCoolingRate;
+          method = '水冷+半导体';
+        } else if (temp > targetTemp) {
+          waterCoolingRate = 0.2; // 每分钟降温0.2°C
+          coolingRate = waterCoolingRate;
+          method = '水冷';
+        }
+        
+        // 应用空间影响
+        const adjustedCoolingRate = coolingRate / spaceFactor;
+        
+        // 更新温度（每分钟更新一次）
+        temp -= adjustedCoolingRate;
+        temp = Math.max(temp, targetTemp);
+        time += 60; // 每步增加60秒
+        steps++;
+        
+        // 添加数据点
+        simulationData.push({
+          time: formatTime(time),
+          temp: temp,
+          method: method,
+          waterCooling: waterCoolingRate,
+          semiconductorCooling: semiconductorCoolingRate
+        });
+        
+        chartData.push({
+          time: formatTime(time),
+          temp: temp
+        });
+      }
+      
+      // 更新图表
+      temperatureChart.data.labels = chartData.map(d => d.time);
+      temperatureChart.data.datasets[0].data = chartData.map(d => d.temp);
+      temperatureChart.data.datasets[1].data = chartData.map(() => targetTemp);
+      temperatureChart.update();
+      
+      // 更新状态表格
+      updateStatusTable();
+      
+      // 显示/隐藏图表滚动按钮
+      const scrollLeft = document.getElementById('scroll-left');
+      const scrollRight = document.getElementById('scroll-right');
+      
+      if (chartData.length > 10) {
+        scrollRight.classList.remove('hidden');
+      } else {
+        scrollLeft.classList.add('hidden');
+        scrollRight.classList.add('hidden');
+      }
+    }
+    
+    // 事件监听器
+    document.getElementById('start-simulation').addEventListener('click', function() {
+      if (simulationRunning) {
+        simulationRunning = false;
+        this.innerHTML = '<i class="fa fa-play-circle mr-2"></i> 开始仿真';
+        document.getElementById('system-status').innerHTML = '<i class="fa fa-pause-circle mr-1"></i> 已暂停';
+        document.getElementById('system-status').className = 'bg-warning/10 text-warning text-xs font-medium px-2.5 py-0.5 rounded-full';
+      } else {
+        // 重置图表数据为当前设置
+        temperatureChart.data.labels = [];
+        temperatureChart.data.datasets[0].data = [];
+        temperatureChart.data.datasets[1].data = [];
+        
+        // 生成所有模拟数据
+        generateSimulationData();
+        
+        simulationRunning = true;
+        startTime = new Date();
+        this.innerHTML = '<i class="fa fa-pause-circle mr-2"></i> 暂停仿真';
+        document.getElementById('system-status').innerHTML = '<i class="fa fa-check-circle mr-1"></i> 运行中';
+        document.getElementById('system-status').className = 'bg-secondary/10 text-secondary text-xs font-medium px-2.5 py-0.5 rounded-full';
+      }
+    });
+    
+    document.getElementById('current-temp-slider').addEventListener('input', function() {
+      currentTemp = parseFloat(this.value);
+      document.getElementById('current-temp').textContent = currentTemp.toFixed(1);
+      updateTemperatureDisplay();
+      
+      // 如果仿真未运行，更新图表初始值
+      if (!simulationRunning) {
+        temperatureChart.data.datasets[0].data[0] = currentTemp;
+        temperatureChart.update();
+      }
+    });
+    
+    document.getElementById('space-size').addEventListener('input', function() {
+      spaceSize = parseFloat(this.value);
+      document.getElementById('space-value').textContent = spaceSize.toFixed(1) + 'm³';
+      updateTemperatureDisplay();
+      
+      // 如果仿真未运行，更新预测数据
+      if (!simulationRunning) {
+        // 修改Y轴最大刻度为75
+        temperatureChart.options.scales.y.max = Math.max(75, currentTemp + 5);
+        temperatureChart.update();
+      }
+    });
+    
+    document.getElementById('target-temp').addEventListener('input', function() {
+      targetTemp = parseInt(this.value);
+      document.getElementById('target-temp-value').textContent = targetTemp + '°C';
+      
+      // 更新图表中的目标温度线
+      temperatureChart.data.datasets[1].data = temperatureChart.data.labels.map(() => targetTemp);
+      
+      // 调整Y轴范围
+      temperatureChart.options.scales.y.min = Math.min(15, targetTemp - 5);
+      
+      temperatureChart.update();
+      updateTemperatureDisplay();
+      
+      // 如果仿真未运行，更新预测数据
+      if (!simulationRunning) {
+        // 修改Y轴最大刻度为75
+        temperatureChart.options.scales.y.min = Math.min(15, targetTemp - 5);
+        temperatureChart.update();
+      }
+    });
+    
+    // 图表滚动控制
+    document.getElementById('scroll-right').addEventListener('click', function() {
+      const chartContainer = document.getElementById('temperature-chart').parentElement;
+      chartContainer.scrollBy({ left: 200, behavior: 'smooth' });
+    });
+    
+    document.getElementById('scroll-left').addEventListener('click', function() {
+      const chartContainer = document.getElementById('temperature-chart').parentElement;
+      chartContainer.scrollBy({ left: -200, behavior: 'smooth' });
+    });
+    
+    // 表格滚动控制
+    document.getElementById('table-scroll-right').addEventListener('click', function() {
+      const tableContainer = document.getElementById('table-container');
+      tableContainer.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+    
+    document.getElementById('table-scroll-left').addEventListener('click', function() {
+      const tableContainer = document.getElementById('table-container');
+      tableContainer.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+    
+    // 监听滚动事件，显示/隐藏滚动按钮
+    document.getElementById('table-container').addEventListener('scroll', function() {
+      const tableScrollLeft = document.getElementById('table-scroll-left');
+      const tableScrollRight = document.getElementById('table-scroll-right');
+      
+      if (this.scrollLeft > 10) {
+        tableScrollLeft.classList.remove('hidden');
+      } else {
+        tableScrollLeft.classList.add('hidden');
+      }
+      
+      if (this.scrollLeft < this.scrollWidth - this.clientWidth - 10) {
+        tableScrollRight.classList.remove('hidden');
+      } else {
+        tableScrollRight.classList.add('hidden');
+      }
+    });
+    
+    // 初始化页面
+    updateTime();
+    setInterval(updateTime, 1000);
+    updateTemperatureDisplay();
+  </script>
 
-<div class="order-1 lg:order-2 relative">
-<div class="relative z-10 rounded-lg overflow-hidden shadow-xl">
-<img src="https://picsum.photos/id/1015/600/700" alt="个人照片" class="w-full h-auto">
-</div>
-<div class="absolute top-5 right-5 w-56 h-56 bg-primary/10 rounded-full -z-10"></div>
-<div class="absolute bottom-5 left-5 w-40 h-40 bg-secondary/10 rounded-full -z-10"></div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- MaxKB 区域 -->
-<section id="maxkb" class="py-12 md:py-16 bg-neutral"> <!-- 优化垂直间距 -->
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
-<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">MaxKB界面</h2> <!-- 优化字体大小 -->
-<div class="w-20 h-1 bg-primary mx-auto"></div>
-</div>
-
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
-<div class="p-4 bg-gray-800 text-white flex justify-between items-center">
-<h3 class="font-medium">MaxKB应用</h3>
-<div class="flex space-x-2">
-<button class="w-3 h-3 rounded-full bg-red-500"></button>
-<button class="w-3 h-3 rounded-full bg-yellow-500"></button>
-<button class="w-3 h-3 rounded-full bg-green-500"></button>
-</div>
-</div>
-<div class="iframe-container">
-<iframe
-              src=" https://e3b3-2409-8975-67a-42c-3953-b528-9bf2-8484.ngrok-free.app/ui/chat/d58f668afa5ef9c9?mode=mobile"
-              src="https://fed2-2409-8975-684-8602-8c78-9f7a-b6a8-6ac6.ngrok-free.app/ui/chat/d58f668afa5ef9c9?mode=mobile"
-style="width: 100%; height: 100%;"
-frameborder="0"
-allow="microphone"
-></iframe>
-</div>
-<div class="p-4 bg-gray-100 text-center text-sm text-gray-600">
-<p>如果界面显示不完全，请尝试使用右侧滚动条查看全部内容。</p>
-</div>
-</div>
-</div>
-</section>
-
-<!-- 技能 -->
-<section id="skills" class="py-12 md:py-16 bg-neutral"> <!-- 优化垂直间距 -->
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
-<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">专业技能</h2> <!-- 优化字体大小 -->
-<div class="w-20 h-1 bg-primary mx-auto"></div>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"> <!-- 优化网格和间距 -->
-<!-- 前端技能 -->
-<div class="bg-white rounded-xl shadow-md p-6 md:p-8 card-hover"> <!-- 优化内边距 -->
-<div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-5"> <!-- 优化图标容器 -->
-<i class="fa fa-code text-primary text-xl"></i>
-</div>
-<h3 class="text-xl font-semibold text-gray-800 mb-3">前端开发</h3>
-<div class="space-y-3"> <!-- 优化间距 -->
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">HTML5</span>
-<span>95%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-primary rounded-full" style="width: 95%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">JavaScript</span>
-<span>90%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-primary rounded-full" style="width: 90%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">React</span>
-<span>85%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Vue.js</span>
-<span>75%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-primary rounded-full" style="width: 75%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Tailwind CSS</span>
-<span>90%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-primary rounded-full" style="width: 90%"></div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- 后端技能 -->
-<div class="bg-white rounded-xl shadow-md p-6 md:p-8 card-hover"> <!-- 优化内边距 -->
-<div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mb-5"> <!-- 优化图标容器 -->
-<i class="fa fa-server text-secondary text-xl"></i>
-</div>
-<h3 class="text-xl font-semibold text-gray-800 mb-3">后端开发</h3>
-<div class="space-y-3"> <!-- 优化间距 -->
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Node.js</span>
-<span>85%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Python (Flask/Django)</span>
-<span>80%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-secondary rounded-full" style="width: 80%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">RESTful API</span>
-<span>90%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-secondary rounded-full" style="width: 90%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">数据库 (MySQL/MongoDB)</span>
-<span>85%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Express.js</span>
-<span>85%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- 其他技能 -->
-<div class="bg-white rounded-xl shadow-md p-6 md:p-8 card-hover"> <!-- 优化内边距 -->
-<div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mb-5"> <!-- 优化图标容器 -->
-<i class="fa fa-cogs text-accent text-xl"></i>
-</div>
-<h3 class="text-xl font-semibold text-gray-800 mb-3">其他技能</h3>
-<div class="space-y-3"> <!-- 优化间距 -->
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Git & GitHub</span>
-<span>90%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-accent rounded-full" style="width: 90%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Webpack & Babel</span>
-<span>80%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-accent rounded-full" style="width: 80%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">Docker</span>
-<span>70%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-accent rounded-full" style="width: 70%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">UI/UX 设计基础</span>
-<span>75%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-accent rounded-full" style="width: 75%"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-1">
-<span class="font-medium">敏捷开发</span>
-<span>85%</span>
-</div>
-<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
-<div class="h-full bg-accent rounded-full" style="width: 85%"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- 工作经验 -->
-<section id="experience" class="py-12 md:py-16 bg-white"> <!-- 优化垂直间距 -->
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
-<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">工作经验</h2> <!-- 优化字体大小 -->
-<div class="w-20 h-1 bg-primary mx-auto"></div>
-</div>
-
-<div class="relative">
-<!-- 垂直线 -->
-<div class="absolute left-0 md:left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 transform md:-translate-x-1/2"></div>
-
-<!-- 经验项1 -->
-<div class="mb-10 relative"> <!-- 优化间距 -->
-<div class="flex flex-col md:flex-row items-center">
-<div class="w-full md:w-1/2 md:pr-8 md:text-right order-2 md:order-1 mt-4 md:mt-0"> <!-- 优化间距 -->
-<h3 class="text-xl font-semibold text-gray-800 mb-1.5">高级全栈开发工程师</h3>
-<p class="text-primary font-medium mb-1.5">科技有限公司</p>
-<p class="text-gray-500 mb-2.5">2020年3月 - 至今</p>
-<p class="text-gray-600 text-sm md:text-base"> <!-- 优化字体大小 -->
-负责公司核心产品的前后端开发与维护，带领团队完成多个重要项目。主导技术选型和架构设计，优化系统性能，提升用户体验。
-</p>
-</div>
-<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center z-10 transform md:-translate-x-1/2 order-1 md:order-2"> <!-- 优化图标大小 -->
-<div class="w-3 h-3 rounded-full bg-white"></div>
-</div>
-<div class="w-full md:w-1/2 md:pl-8 hidden md:block order-3"></div> <!-- 优化间距 -->
-</div>
-</div>
-
-<!-- 经验项2 -->
-<div class="mb-10 relative"> <!-- 优化间距 -->
-<div class="flex flex-col md:flex-row items-center">
-<div class="w-full md:w-1/2 md:pr-8 hidden md:block order-1"></div> <!-- 优化间距 -->
-<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center z-10 transform md:-translate-x-1/2 order-2"></div> <!-- 优化图标大小 -->
-<div class="w-full md:w-1/2 md:pl-8 order-3 mt-4 md:mt-0"> <!-- 优化间距 -->
-<h3 class="text-xl font-semibold text-gray-800 mb-1.5">全栈开发工程师</h3>
-<p class="text-primary font-medium mb-1.5">互联网公司</p>
-<p class="text-gray-500 mb-2.5">2017年6月 - 2020年2月</p>
-<p class="text-gray-600 text-sm md:text-base"> <!-- 优化字体大小 -->
-参与电商平台和企业管理系统的开发，负责前后端功能实现和API设计。与UI/UX团队合作，确保产品视觉效果和用户体验。
-</p>
-</div>
-</div>
-</div>
-
-<!-- 经验项3 -->
-<div class="relative">
-<div class="flex flex-col md:flex-row items-center">
-<div class="w-full md:w-1/2 md:pr-8 md:text-right order-2 md:order-1 mt-4 md:mt-0"> <!-- 优化间距 -->
-<h3 class="text-xl font-semibold text-gray-800 mb-1.5">前端开发工程师</h3>
-<p class="text-primary font-medium mb-1.5">软件公司</p>
-<p class="text-gray-500 mb-2.5">2015年9月 - 2017年5月</p>
-<p class="text-gray-600 text-sm md:text-base"> <!-- 优化字体大小 -->
-负责公司网站和Web应用的前端开发，实现响应式设计和交互效果。优化前端性能，解决跨浏览器兼容性问题。
-</p>
-</div>
-<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center z-10 transform md:-translate-x-1/2 order-1 md:order-2"> <!-- 优化图标大小 -->
-<div class="w-3 h-3 rounded-full bg-white"></div>
-</div>
-<div class="w-full md:w-1/2 md:pl-8 hidden md:block order-3"></div> <!-- 优化间距 -->
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- 项目经历 -->
-<section id="projects" class="py-12 md:py-16 bg-neutral"> <!-- 优化垂直间距 -->
-<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
-<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
-<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">项目经历</h2> <!-- 优化字体大小 -->
-<div class="w-20 h-1 bg-primary mx-auto"></div>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"> <!-- 优化网格和间距 -->
-<!-- 项目1 -->
-<div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
-<div class="relative h-40 sm:h-48"> <!-- 优化图片高度 -->
-<img src="https://picsum.photos/id/0/600/400" alt="电商平台" class="w-full h-full object-cover">
-<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-<div class="p-3"> <!-- 优化内边距 -->
-<span class="bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded">React</span>
-<span class="bg-secondary text-white text-xs font-semibold px-2 py-0.5 rounded ml-1.5">Node.js</span>
-</div>
-</div>
-</div>
-<div class="p-5"> <!-- 优化内边距 -->
-<h3 class="text-lg font-semibold text-gray-800 mb-2">电商平台</h3>
-<p class="text-gray-600 text-sm mb-3 leading-relaxed"> <!-- 优化字体大小 -->
-一个现代化的电商平台，支持商品浏览、购物车、支付流程等功能。采用React和Node.js技术栈，实现了响应式设计和流畅的用户体验。
-</p>
-<div class="flex justify-between items-center">
-<span class="text-xs text-gray-500">2021年 - 至今</span>
-<a href="#" class="text-primary text-sm font-medium hover:underline flex items-center">
-查看详情 <i class="fa fa-arrow-right ml-1"></i>
-</a>
-</div>
-</div>
-</div>
-
-<!-- 项目2 -->
-<div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
-<div class="relative h-40 sm:h-48"> <!-- 优化图片高度 -->
-<img src="https://picsum.photos/id/180/600/400" alt="企业管理系统" class="w-full h-full object-cover">
-<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-<div class="p-3"> <!-- 优化内边距 -->
-<span class="bg-vue text-white text-xs font-semibold px-2 py-0.5 rounded">Vue.js</span>
-<span class="bg-express text-white text-xs font-semibold px-2 py-0.5 rounded ml-1.5">Express</span>
-</div>
-</div>
-</div>
-<div class="p-5"> <!-- 优化内边距 -->
-<h3 class="text-lg font-semibold text-gray-800 mb-2">企业管理系统</h3>
-<p class="text-gray-600 text-sm mb-3 leading-relaxed"> <!-- 优化字体大小 -->
-为中小型企业设计的综合管理系统，包括人力资源、财务管理、项目管理等模块。提供数据可视化和报表功能，帮助企业提高管理效率。
-</p>
-<div class="flex justify-between items-center">
-<span class="text-xs text-gray-500">2020年 - 2021年</span>
-<a href="#" class="text-primary text-sm font-medium hover:underline flex items-center">
-查看详情 <i class="fa fa-arrow-right ml-1"></i>
-</a>
-</div>
-</div>
-</div>
-
+    </body></html>
