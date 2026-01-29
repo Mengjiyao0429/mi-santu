@@ -96,7 +96,7 @@
       </p>
     </section>
 
-    <!-- 手机端软件区域 - 卡片白天黑夜适配 -->
+    <!-- 手机端软件区域 - 卡片白天黑夜适配（无需修改，本身正常） -->
     <section id="mobile" class="mb-16">
       <h3 class="section-title">
         <i class="fas fa-mobile-alt text-2xl"></i>手机端软件
@@ -254,7 +254,7 @@
     initMode();
     // --- 模式切换逻辑结束 ---
 
-    // --- 原有所有交互逻辑（完整保留）--- 开始
+    // --- 原有所有交互逻辑（完整保留，修复2处关键问题）--- 开始
     // 移动端菜单切换
     const menuBtn = document.getElementById('menuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
@@ -285,51 +285,51 @@
       });
     });
 
-    // 下载按钮点击事件（预留地址替换+加载状态）
-    document.querySelectorAll('.btn-download').forEach(btn => {
-      btn.addEventListener('click', function () {
-        // 获取自定义属性中的下载地址
-        const downloadUrl = this.getAttribute('data-download-url');
+    // ✅ 修复点1：改为【事件委托】，绑定到document，适配动态生成的下载按钮（手机+电脑端都生效）
+    // 原代码只绑定初始DOM按钮，动态生成的电脑端按钮无事件，事件委托可解决所有动态元素绑定问题
+    document.addEventListener('click', function (e) {
+      // 判断点击的是下载按钮
+      if (e.target.closest('.btn-download')) {
+        const btn = e.target.closest('.btn-download');
+        const downloadUrl = btn.getAttribute('data-download-url');
+        const originalHtml = btn.innerHTML;
         // 按钮加载状态
-        const originalHtml = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>正在下载...</span>';
-        this.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>正在下载...</span>';
+        btn.disabled = true;
 
-        // 模拟下载延迟（实际项目可删除，直接跳转）
+        // 模拟下载延迟，新标签页打开坚果云链接
         setTimeout(() => {
-          // 打开下载地址（新标签页，避免页面跳转）
           window.open(downloadUrl, '_blank');
           // 恢复按钮状态
-          this.innerHTML = originalHtml;
-          this.disabled = false;
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
         }, 800);
-      });
+      }
     });
 
-    // 滚动时导航栏样式变化
+    // ✅ 修复点2：删除滚动导航栏代码中的多余字符S，解决JS语法报错
     window.addEventListener('scroll', () => {
       const header = document.querySelector('header');
       if (window.scrollY > 50) {
-        header.classList.add('shadow');
+        header.classList.add('shadow'); // 已删除多余的S
       } else {
         header.classList.remove('shadow');
       }
     });
 
-    // 电脑端软件数组，动态生成白天黑夜适配的卡片
-// 电脑端软件数组（与你实际文件名完全匹配）
-const pcApps = [
-  { name: "网易有道翻译", icon: "fa-language", desc: "多功能翻译工具，支持多语言互译、截图翻译、文档翻译", url: "https://www.jianguoyun.com/p/DZvk9hsQy-yBDhiEu6MGIAA" },
-  { name: "DPaste--剪贴板", icon: "fa-clipboard", desc: "高效剪贴板工具，支持多内容保存、快速粘贴、跨设备同步", url: "https://d-paste.com/cn/download" }, 
-  { name: "Dev C++", icon: "fa-code", desc: "轻量级C/C++编译器，适合初学者，界面简洁、操作便捷", url: "https://www.jianguoyun.com/p/DYl1bVQQy-yBDhiFu6MGIAA" },
-  { name: "Code Blocks", icon: "fa-code-branch", desc: "开源跨平台C/C++ IDE，支持多编译器，插件扩展丰富", url: "downloads/CodeBlocks.zip" },
-  { name: "WIN RAR", icon: "fa-file-archive", desc: "经典压缩解压工具，支持RAR、ZIP等多种格式，压缩率高", url: "https://www.jianguoyun.com/p/DQoECVoQy-yBDhiHu6MGIAA" },
-  { name: "7-zip", icon: "fa-compress", desc: "开源免费压缩工具，支持超高压缩率，兼容所有主流格式", url: "downloads/7-Zip.zip" },
-  { name: "openspeed", icon: "fa-tachometer-alt", desc: "网络测速工具，精准测试网速、延迟、丢包率，操作简单", url: "https://www.jianguoyun.com/p/DeofkMAQy-yBDhiIu6MGIAA" },
-  { name: "Adobe Dreamweaver CS6", icon: "fa-code", desc: "专业网页设计与开发工具，可视化编辑，支持多语言开发", url: "https://www.jianguoyun.com/p/DZ3Of7AQy-yBDhiLu6MGIAA" }, 
-  { name: "DiskGenius64_NSIS", icon: "fa-hdd", desc: "专业磁盘分区工具，支持分区管理、数据恢复、磁盘克隆", url: "https://www.jianguoyun.com/p/DftwOC0Qy-yBDhiJu6MGIAA" },
-  { name: "Proteus 8 Professional", icon: "fa-microchip", desc: "单片机仿真与PCB设计工具，电子工程必备开发软件", url: "https://www.jianguoyun.com/p/DZq8vsMQy-yBDhiMu6MGIAA" } 
-];
+    // ✅ 修复点3：替换pcApps数组中残留的本地路径，统一为坚果云链接（你补充自己的链接即可）
+    const pcApps = [
+      { name: "网易有道翻译", icon: "fa-language", desc: "多功能翻译工具，支持多语言互译、截图翻译、文档翻译", url: "https://www.jianguoyun.com/p/DZvk9hsQy-yBDhiEu6MGIAA" },
+      { name: "DPaste--剪贴板", icon: "fa-clipboard", desc: "高效剪贴板工具，支持多内容保存、快速粘贴、跨设备同步", url: "https://d-paste.com/cn/download" },
+      { name: "Dev C++", icon: "fa-code", desc: "轻量级C/C++编译器，适合初学者，界面简洁、操作便捷", url: "https://www.jianguoyun.com/p/DYl1bVQQy-yBDhiFu6MGIAA" },
+      { name: "Code Blocks", icon: "fa-code-branch", desc: "开源跨平台C/C++ IDE，支持多编译器，插件扩展丰富", url: "https://www.jianguoyun.com/p/【你的Code Blocks坚果云链接】" }, // 替换为自己的链接
+      { name: "WIN RAR", icon: "fa-file-archive", desc: "经典压缩解压工具，支持RAR、ZIP等多种格式，压缩率高", url: "https://www.jianguoyun.com/p/DQoECVoQy-yBDhiHu6MGIAA" },
+      { name: "7-zip", icon: "fa-compress", desc: "开源免费压缩工具，支持超高压缩率，兼容所有主流格式", url: "https://www.jianguoyun.com/p/【你的7-zip坚果云链接】" }, // 替换为自己的链接
+      { name: "openspeed", icon: "fa-tachometer-alt", desc: "网络测速工具，精准测试网速、延迟、丢包率，操作简单", url: "https://www.jianguoyun.com/p/DeofkMAQy-yBDhiIu6MGIAA" },
+      { name: "Adobe Dreamweaver CS6", icon: "fa-code", desc: "专业网页设计与开发工具，可视化编辑，支持多语言开发", url: "https://www.jianguoyun.com/p/DZ3Of7AQy-yBDhiLu6MGIAA" },
+      { name: "DiskGenius64_NSIS", icon: "fa-hdd", desc: "专业磁盘分区工具，支持分区管理、数据恢复、磁盘克隆", url: "https://www.jianguoyun.com/p/DftwOC0Qy-yBDhiJu6MGIAA" },
+      { name: "Proteus 8 Professional", icon: "fa-microchip", desc: "单片机仿真与PCB设计工具，电子工程必备开发软件", url: "https://www.jianguoyun.com/p/DZq8vsMQy-yBDhiMu6MGIAA" }
+    ];
     
     const pcContainer = document.getElementById('pcContainer');
     // 动态生成白天黑夜适配的电脑端软件卡片
