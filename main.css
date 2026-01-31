@@ -1,0 +1,92 @@
+@charset "utf-8";
+@tailwind utilities;
+
+/* 基础样式 */
+body {
+    @apply font-inter bg-light text-dark;
+}
+
+/* 导航栏样式 */
+#navbar {
+    @apply fixed w-full bg-white/90 backdrop-blur-sm shadow-md z-50 transition-all duration-300;
+}
+
+/* 移动端菜单 */
+#mobile-menu {
+    @apply hidden md:hidden bg-white shadow-lg absolute w-full;
+}
+
+/* 返回按钮样式 */
+.back-button {
+    @apply inline-flex items-center text-primary hover:text-secondary font-medium transition-colors duration-200;
+}
+
+/* 英雄区域样式 */
+.hero-section {
+    @apply pt-4 relative h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden;
+}
+
+.hero-image {
+    @apply absolute inset-0 z-0;
+}
+
+.hero-image img {
+    @apply w-full h-full object-cover;
+}
+
+.hero-overlay {
+    @apply absolute inset-0 bg-dark/50;
+}
+
+.hero-content {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center;
+}
+
+.hero-title {
+    @apply text-[clamp(2rem,5vw,3rem)] font-bold text-white mb-4 text-shadow;
+}
+
+.hero-subtitle {
+    @apply text-[clamp(1rem,2vw,1.25rem)] text-white/90 max-w-3xl mx-auto text-shadow;
+}
+
+/* 卡片样式 */
+.card {
+    @apply bg-white rounded-xl overflow-hidden shadow-md p-6 card-hover;
+}
+
+.card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+/* 标题样式 */
+.section-title {
+    @apply text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-8;
+}
+
+/* 页脚样式 */
+footer {
+    @apply bg-dark text-white py-12;
+}
+
+.footer-title {
+    @apply text-xl font-semibold mb-4;
+}
+
+.footer-link {
+    @apply text-gray-400 hover:text-white transition-colors duration-200;
+}
+
+/* 自定义工具类 */
+@layer utilities {
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+}

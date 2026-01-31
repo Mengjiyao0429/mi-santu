@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美食特色 - 我的家乡-张掖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#b0bb17',
+                        secondary: '#98a113',
+                        dark: '#2d3748',
+                        light: '#f7fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-light text-dark">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-md z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-primary font-bold text-xl md:text-2xl">我的家乡-张掖</a>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">首页</a>
+                    <a href="zhangye_intro.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">张掖简介</a>
+                    <a href="food.html" class="text-primary hover:text-secondary transition-colors duration-200 font-medium font-semibold">美食特色</a>
+                    <a href="scenery.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">旅游风景</a>
+                    <a href="about_me.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">自我介绍</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-dark hover:text-primary">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">首页</a>
+                <a href="zhangye_intro.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">张掖简介</a>
+                <a href="food.html" class="block py-2 text-primary hover:text-secondary transition-colors duration-200 font-semibold">美食特色</a>
+                <a href="scenery.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">旅游风景</a>
+                <a href="about_me.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">自我介绍</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="pt-16 relative h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="image/xiaochi.png" alt="张掖美食" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-dark/50"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-4 text-shadow">
+                美食特色
+            </h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 max-w-3xl mx-auto text-shadow">
+                品味丝路风情，感受舌尖上的张掖
+            </p>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 张掖美食概览 -->
+            <section class="mb-16">
+                <div class="text-center mb-12">
+                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">张掖美食概览</h2>
+                    <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                    <p class="text-gray-600 max-w-3xl mx-auto text-lg">
+                        张掖美食融合了西北风味和少数民族特色，以面食、牛羊肉为主，口味偏重，
+                        独具地方特色。这里既有传统的小吃，也有独具特色的宴席，让您大饱口福。
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- 分类1 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="image/cuoyuzi.png" alt="特色面食" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-dark mb-3">特色面食</h3>
+                            <p class="text-gray-600 mb-4">
+                                张掖面食种类繁多，制作精细，口感独特，是张掖饮食文化的重要组成部分。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 分类2 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="image/yanrou.png" alt="牛羊肉美食" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-dark mb-3">牛羊肉美食</h3>
+                            <p class="text-gray-600 mb-4">
+                                张掖牛羊肉肉质鲜嫩，营养丰富，是当地居民餐桌上的常客。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 分类3 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="image/xiaochi.png" alt="风味小吃" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-dark mb-3">风味小吃</h3>
+                            <p class="text-gray-600 mb-4">
+                                张掖小吃种类丰富，口味独特，是了解张掖饮食文化的最佳窗口。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 特色面食 -->
+            <section class="mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-8">特色面食</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 牛肉小饭 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/niurouxiaof.png" alt="牛肉小饭" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">牛肉小饭</h3>
+                                <p class="text-gray-600 mb-4">
+                                    牛肉小饭是张掖最具代表性的早餐之一，它并非米饭，而是将面切成小丁，
+                                    配以牛肉汤和牛肉片，再加上葱花、香菜等调料，口感筋道，味道鲜美。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-cutlery mr-1"></i> 早餐
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-fire mr-1"></i> 热食
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：孙记牛肉小饭、周记牛肉小饭
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 搓鱼面 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/cuoyuzi.png" alt="搓鱼面" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">搓鱼面</h3>
+                                <p class="text-gray-600 mb-4">
+                                    搓鱼面是张掖地区特有的面食，因面条两头尖，中间粗，形似小鱼而得名。
+                                    它是手工搓制而成，口感爽滑，配以各种臊子食用，风味独特。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-clock-o mr-1"></i> 全天
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-cutlery mr-1"></i> 主食
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：老李家搓鱼面、搓鱼世家
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 炒炮 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/paozhang.png" alt="炒炮" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">炒炮</h3>
+                                <p class="text-gray-600 mb-4">
+                                    炒炮是张掖的特色面食，因面条形似炮仗而得名。它是将面切成小条，
+                                    煮熟后配以豆芽、小白菜等蔬菜炒制而成，口感劲道，麻辣鲜香。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-clock-o mr-1"></i> 午餐/晚餐
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-fire mr-1"></i> 辣
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：小辣椒炒炮、老字号炒炮
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 牛肉拉面 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/lamian.png"-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">牛肉拉面</h3>
+                                <p class="text-gray-600 mb-4">
+                                    张掖的牛肉拉面独具特色，面条粗细均匀，口感筋道，牛肉汤清澈鲜香，
+                                    配以辣椒油和香菜，味道十分诱人。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-cutlery mr-1"></i> 早餐/午餐
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-star mr-1"></i> 经典
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：马子禄牛肉面、金强牛肉面
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 牛羊肉美食 -->
+            <section class="mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-8">牛羊肉美食</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 手抓羊肉 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/yanrou.png" alt="手抓羊肉" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">手抓羊肉</h3>
+                                <p class="text-gray-600 mb-4">
+                                    手抓羊肉是张掖地区的传统名菜，选用当地优质羊肉，配以花椒、八角等调料煮熟，
+                                    肉质鲜嫩，不膻不腻，蘸上韭菜花酱或辣椒油，味道更佳。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-cutlery mr-1"></i> 主菜
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-clock-o mr-1"></i> 午餐/晚餐
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：裕固风情园、草原手抓
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 牛肉垫卷子 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/dianjuanzi.png" alt="牛肉垫卷子" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">牛肉垫卷子</h3>
+                                <p class="text-gray-600 mb-4">
+                                    牛肉垫卷子是张掖地区的特色美食，将牛肉炖煮至熟烂，再将擀好的面卷铺在牛肉上，
+                                    一同焖煮至面卷入味，牛肉香烂，面卷子筋道，风味独特。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-cutlery mr-1"></i> 主菜
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-home mr-1"></i> 家常菜
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：老妈牛肉垫卷子、老张牛肉馆
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 风味小吃 -->
+            <section>
+                <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-8">风味小吃</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 灰香豆 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/huidouzi.png"alt="灰香豆" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">灰香豆</h3>
+                                <p class="text-gray-600 mb-4">
+                                    灰香豆是张掖地区的传统甜点，由黑豆、红枣等原料熬制而成，色泽棕红，香甜可口，
+                                    具有浓郁的豆香和枣香，是夏季消暑的佳品。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-cutlery mr-1"></i> 甜点
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-snowflake-o mr-1"></i> 冷饮
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：老字号灰香豆、甜水井灰香豆
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 搓鱼面 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                                <img src="image/niangpi.png" alt="搓鱼面" class="w-full h-full object-cover">
+                            </div>
+                            <div class="md:w-1/2 p-6">
+                                <h3 class="text-xl font-semibold text-dark mb-3">酿皮</h3>
+                                <p class="text-gray-600 mb-4">
+                                    酿皮是张掖地区的传统小吃，以面粉为原料，经发酵、蒸制而成，口感筋道，
+                                    配以辣椒油、香醋、蒜末等调料，味道酸辣可口，是夏季消暑的佳品。
+                                </p>
+                                <div class="mb-4">
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mr-2">
+                                        <i class="fa fa-clock-o mr-1"></i> 全天
+                                    </span>
+                                    <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                        <i class="fa fa-fire mr-1"></i> 辣
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    <i class="fa fa-map-marker mr-1"></i> 推荐店铺：老字号酿皮、王记酿皮
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">我的家乡-张掖</h3>
+                    <p class="text-gray-400 mb-6">
+                        探索丝路明珠，感受七彩张掖的独特魅力
+                    </p>
+                    
+</body>
+</html>    

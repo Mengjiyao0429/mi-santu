@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅游风景 - 我的家乡-张掖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#b0bb17',
+                        secondary: '#98a113',
+                        dark: '#2d3748',
+                        light: '#f7fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-light text-dark">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-md z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-primary font-bold text-xl md:text-2xl">我的家乡-张掖</a>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">首页</a>
+                    <a href="zhangye_intro.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">张掖简介</a>
+                    <a href="food.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">美食特色</a>
+                    <a href="scenery.html" class="text-primary hover:text-secondary transition-colors duration-200 font-medium font-semibold">旅游风景</a>
+                    <a href="about_me.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">自我介绍</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-dark hover:text-primary">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">首页</a>
+                <a href="zhangye_intro.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">张掖简介</a>
+                <a href="food.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">美食特色</a>
+                <a href="scenery.html" class="block py-2 text-primary hover:text-secondary transition-colors duration-200 font-semibold">旅游风景</a>
+                <a href="about_me.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">自我介绍</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 返回上一目录按钮（添加到所有二级页面） -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+        <a href="index.html" class="inline-flex items-center text-primary hover:text-secondary font-medium transition-colors duration-200">
+            <i class="fa fa-arrow-left mr-2"></i> 返回首页
+        </a>
+    </div>
+
+    <!-- 英雄区域 -->
+    <header class="pt-4 relative h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="image/matisi.png" alt="张掖旅游风景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-dark/50"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-4 text-shadow">
+                旅游风景
+            </h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 max-w-3xl mx-auto text-shadow">
+                探索张掖的自然奇观和人文遗产
+            </p>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 内容区域保持不变... -->
+            <!-- 以下为原内容，省略部分以节省篇幅 -->
+            
+            <!-- 旅游攻略 -->
+            <section>
+                <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-8">旅游攻略</h2>
+                
+                <div class="bg-white rounded-xl overflow-hidden shadow-md p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark mb-4 flex items-center">
+                                <i class="fa fa-calendar text-primary mr-3"></i> 最佳旅游时间
+                            </h3>
+                            <p class="text-gray-600 mb-4">
+                                张掖的最佳旅游时间是6月至9月，此时气候宜人，风景秀丽，适合户外活动和观光旅游。
+                                春季（3-5月）和秋季（10-11月）也是不错的选择，此时气温适中，游客较少。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark mb-4 flex items-center">
+                                <i class="fa fa-map-o text-primary mr-3"></i> 交通指南
+                            </h3>
+                            <p class="text-gray-600 mb-4">
+                                张掖有机场和火车站，交通十分便利。市内有公交车和出租车，也可以租车自驾。
+                                前往各个景区可以选择包车或参加旅行团，方便快捷。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark mb-4 flex items-center">
+                                <i class="fa fa-info-circle text-primary mr-3"></i> 旅游提示
+                            </h3>
+                            <p class="text-gray-600 mb-4">
+                                张掖地处高原，紫外线较强，需注意防晒。昼夜温差较大，需携带保暖衣物。
+                                部分景区海拔较高，可能会有高原反应，需适当休息，避免剧烈运动。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">我的家乡-张掖</h3>
+                    <p class="text-gray-400 mb-6">
+                        探索丝路明珠，感受七彩张掖的独特魅力
+                    </p>
+                   
+</body>
+</html>

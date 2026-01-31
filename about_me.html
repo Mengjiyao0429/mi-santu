@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自我介绍 - 我的家乡-张掖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#b0bb17',
+                        secondary: '#98a113',
+                        dark: '#2d3748',
+                        light: '#f7fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-light text-dark">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-md z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-primary font-bold text-xl md:text-2xl">我的家乡-张掖</a>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">首页</a>
+                    <a href="zhangye_intro.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">张掖简介</a>
+                    <a href="food.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">美食特色</a>
+                    <a href="scenery.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">旅游风景</a>
+                    <a href="about_me.html" class="text-primary hover:text-secondary transition-colors duration-200 font-medium font-semibold">自我介绍</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-dark hover:text-primary">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">首页</a>
+                <a href="zhangye_intro.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">张掖简介</a>
+                <a href="food.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">美食特色</a>
+                <a href="scenery.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">旅游风景</a>
+                <a href="about_me.html" class="block py-2 text-primary hover:text-secondary transition-colors duration-200 font-semibold">自我介绍</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 返回上一目录按钮 -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+        <a href="index.html" class="inline-flex items-center text-primary hover:text-secondary font-medium transition-colors duration-200">
+            <i class="fa fa-arrow-left mr-2"></i> 返回首页
+        </a>
+    </div>
+
+    <!-- 英雄区域 -->
+    <header class="pt-4 relative h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="image/douyin.png" alt="自我介绍" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-dark/50"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-white mb-4 text-shadow">
+                自我介绍
+            </h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 max-w-3xl mx-auto text-shadow">
+                来自张掖的计算机科学爱好者
+            </p>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 个人简介卡片 -->
+            <section class="mb-16">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-xl card-hover">
+                    <div class="grid grid-cols-1 lg:grid-cols-5">
+                       <div class="lg:col-span-2 flex items-center justify-center">
+    <img src="image/tou.png" alt="蒙吉尧" 
+         class="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg">
+</div>
+                        <!-- 个人信息区域 -->
+                        <div class="lg:col-span-3 p-8 lg:p-12">
+                            <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-2">蒙吉尧</h2>
+                            <p class="text-primary font-medium mb-6">来自甘肃省张掖市甘州区的计算机科学与技术专业学生</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <!-- 教育背景 -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-dark mb-3 flex items-center">
+                                        <i class="fa fa-graduation-cap text-primary mr-3"></i> 教育背景
+                                    </h3>
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start">
+                                            <span class="text-primary font-medium mt-1 mr-3">•</span>
+                                            <div>
+                                                <p class="font-semibold">西北师范大学</p>
+                                                <p class="text-gray-600">计算机科学与技术专业 | 2024至今</p>
+                                                <p class="text-gray-600 mt-1">专注科研前列</p>
+                                            </div>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="text-primary font-medium mt-1 mr-3">•</span>
+                                            <div>
+                                                <p class="font-semibold">甘肃省张掖中学</p>
+                                                <p class="text-gray-600">高中毕业 |2021-2024</p>
+                                                <p class="text-gray-600 mt-1">理科方向 物理+化学+政治 | 数学竞赛校级奖项，市极单科状元，”文明礼仪标兵“荣誉称号，优秀毕业生</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- 个人兴趣 -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-dark mb-3 flex items-center">
+                                        <i class="fa fa-heart text-primary mr-3"></i> 个人兴趣
+                                    </h3>
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start">
+                                            <span class="text-primary font-medium mt-1 mr-3">•</span>
+                                            <div>
+                                                <p class="font-semibold">编程与开发</p>
+                                                <p class="text-gray-600">体育运动网球，排球，乒乓球，羽毛球</p>
+                                            </div>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="text-primary font-medium mt-1 mr-3">•</span>
+                                            <div>
+                                                <p class="font-semibold">家乡文化传播</p>
+                                                <p class="text-gray-600">通过互联网分享张掖的美景与美食</p>
+                                            </div>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="text-primary font-medium mt-1 mr-3">•</span>
+                                            <div>
+                                                <p class="font-semibold">户外运动</p>
+                                                <p class="text-gray-600">徒步旅行、骑行探索张掖周边</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- 联系方式 -->
+                            <div class="mt-8">
+                                <h3 class="text-xl font-semibold text-dark mb-4 flex items-center">
+                                    <i class="fa fa-envelope text-primary mr-3"></i> 联系方式
+                                </h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                                            <i class="fa fa-phone"></i>
+                                        </div>
+                                        <p class="text-gray-600">15393601214</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                                            <i class="fa fa-comment"></i>
+                                        </div>
+                                        <p class="text-gray-600">QQ: 3521275631</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                                            <i class="fa fa-envelope-o"></i>
+                                        </div>
+                                        <p class="text-gray-600">3521275631@qq.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 大学生活分享 -->
+            <section class="mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-8">大学生活与学习感悟</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 学习经历 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md p-6 card-hover">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                                <i class="fa fa-book text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-dark">专业学习体验</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            进入西北师范大学计算机科学与技术专业后，我系统学习编程，C语言原理等核心课程。
+                            最让我着迷的是Web开发课程，通过实践项目我掌握了HTML、CSS等前端技术，
+                            并成功开发了多个小型网站项目，这让我对互联网技术有了更深入的理解。欢迎点击我的网址mi-santu.top交流
+                        </p>
+                        <p class="text-gray-600">
+                            大学的学习氛围非常浓厚，我经常在图书馆和实验室钻研技术，也积极参加编程竞赛和技术分享会，
+                            这些经历不仅提升了我的专业能力，也让我结识了许多志同道合的朋友。
+                        </p>
+                    </div>
+                    
+                    <!-- 家乡情怀 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md p-6 card-hover">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                                <i class="fa fa-home text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-dark">我的家乡情结</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            虽然身在兰州求学，但我始终心系家乡张掖。每个假期回到张掖，我都会探索新的景点，
+                            品尝久违的美食，用相机记录下家乡的变化。我发现自己越来越想通过所学的技术，
+                            为家乡的文化传播和旅游推广贡献一份力量。
+                        </p>
+                        <p class="text-gray-600">
+                            在大学期间，我还加入了学校的社团，通过活动分享张掖的美景、美食和风土人情，
+                            让更多人了解这座丝绸之路上的明珠城市。
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">我的家乡-张掖</h3>
+                    <p class="text-gray-400 mb-6">
+                        探索丝路明珠，感受七彩张掖的独特魅力
+                    </p>
+                    
+</body>
+</html>

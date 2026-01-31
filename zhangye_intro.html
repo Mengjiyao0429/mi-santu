@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张掖简介 - 我的家乡-张掖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#b0bb17',
+                        secondary: '#98a113',
+                        dark: '#2d3748',
+                        light: '#f7fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <link href="main.css" rel="stylesheet" type="text/css">
+</head>
+<body class="font-inter bg-light text-dark">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-md z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-primary font-bold text-xl md:text-2xl">我的家乡-张掖</a>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">首页</a>
+                    <a href="zhangye_intro.html" class="text-primary hover:text-secondary transition-colors duration-200 font-medium font-semibold">张掖简介</a>
+                    <a href="food.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">美食特色</a>
+                    <a href="scenery.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">旅游风景</a>
+                    <a href="about_me.html" class="text-dark hover:text-primary transition-colors duration-200 font-medium">自我介绍</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-dark hover:text-primary">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">首页</a>
+                <a href="zhangye_intro.html" class="block py-2 text-primary hover:text-secondary transition-colors duration-200 font-semibold">张掖简介</a>
+                <a href="food.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">美食特色</a>
+                <a href="scenery.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">旅游风景</a>
+                <a href="about_me.html" class="block py-2 text-dark hover:text-primary transition-colors duration-200">自我介绍</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="pt-16 relative h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="image/zhangye.png" alt="张掖城市风光" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-dark/50"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-4">
+                张掖简介
+            </h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 max-w-3xl mx-auto">
+                探索这座丝绸之路上的历史文化名城
+            </p>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 关于张掖 -->
+            <section class="mb-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-dark mb-6">历史文化</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            张掖有着悠久的历史，早在新石器时代就有人类在此活动。西汉时期，汉武帝派张骞出使西域，开辟了丝绸之路，张掖成为丝绸之路上的重要驿站。
+                        </p>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            公元609年，隋炀帝西巡至张掖，会见西域27国使者，举行了"万国博览会"，这是中国历史上最早的世博会之一。
+                        </p>
+                        <p class="text-gray-600 leading-relaxed">
+                            张掖还是佛教东传的重要通道，马蹄寺、大佛寺等古迹见证了佛教文化在这片土地上的繁荣与发展。
+                        </p>
+                    </div>
+                    
+                    <div class="rounded-xl overflow-hidden shadow-xl">
+                        <img src="image/lishiwenhua.png" alt="张掖历史文化" class="w-full h-auto">
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 地理环境 -->
+            <section class="mb-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="rounded-xl overflow-hidden shadow-xl order-2 md:order-1">
+                        <img src="image/dilihuangjing.png" alt="张掖地理环境" class="w-full h-auto">
+                    </div>
+                    
+                    <div class="order-1 md:order-2">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-dark mb-6">地理环境</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            张掖市位于甘肃省西北部，河西走廊中段，地处东经97°20′至102°12′，北纬37°28′至39°57′之间。
+                        </p>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            全市总面积4.09万平方公里，地形复杂多样，南部为祁连山区，北部为荒漠戈壁，中部为走廊平原，形成了"一山一水一平原"的独特地理格局。
+                        </p>
+                        <p class="text-gray-600 leading-relaxed">
+                            祁连山冰川融水形成了黑河、山丹河等河流，孕育了肥沃的绿洲，使张掖成为河西走廊上的"塞上江南"。
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 城市发展 -->
+            <section class="mb-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-dark mb-6">城市发展</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            近年来，张掖市坚持"生态优先、绿色发展"的理念，充分发挥自身优势，积极推进经济结构调整和转型升级。
+                        </p>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            旅游业成为张掖的支柱产业，七彩丹霞、马蹄寺、平山湖大峡谷等景点吸引了大量国内外游客。同时，现代农业、新能源、文化产业等也取得了长足发展。
+                        </p>
+                        <p class="text-gray-600 leading-relaxed">
+                            城市基础设施不断完善，教育、医疗、文化等社会事业全面进步，人民生活水平显著提高。
+                        </p>
+                    </div>
+                    
+                    <div class="rounded-xl overflow-hidden shadow-xl">
+                        <img src="image/chengsi.png" alt="张掖城市发展" class="w-full h-auto">
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 人口与民族 -->
+            <section>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="rounded-xl overflow-hidden shadow-xl order-2 md:order-1">
+                        <img src="image/yuguzu.png" alt="张掖人口与民族" class="w-full h-auto">
+                    </div>
+                    
+                    <div class="order-1 md:order-2">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-dark mb-6">人口与民族</h2>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            截至2023年，张掖市常住人口约120万人，其中城镇人口约60万人，乡村人口约60万人。
+                        </p>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            张掖是一个多民族聚居的地区，有汉族、回族、藏族、裕固族等38个民族，其中裕固族是中国独有的少数民族之一，主要分布在肃南裕固族自治县。
+                        </p>
+                        <p class="text-gray-600 leading-relaxed">
+                            各民族在长期的生产生活中，相互尊重、相互学习、相互帮助，共同创造了丰富多彩的民族文化。
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">我的家乡-张掖</h3>
+                    <p class="text-gray-400 mb-6">
+                        探索丝路明珠，感受七彩张掖的独特魅力
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 我的家乡-张掖. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('py-2', 'shadow-lg');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.add('py-4');
+                navbar.classList.remove('py-2', 'shadow-lg');
+            }
+        });
+    </script>
+</body>
+</html>
