@@ -1,375 +1,533 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="dark">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>叁土 </title>
-  <!-- 引入Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 引入Font Awesome图标 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- 自定义Tailwind配置 -->
-  <script>
-    tailwind.config = {
-      darkMode: 'class', // 开启class模式的暗黑模式切换
-      theme: {
-        extend: {
-          colors: {
-            primary: '#165DFF', // 主色调-科技蓝（白天黑夜通用）
-            secondary: '#36D399', // 辅助色-成功绿
-            dark: '#1E293B',
-            light: '#F8FAFC'
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-          },
-        },
-      }
-    }
-  </script>
-  <style type="text/tailwindcss">
-    @layer utilities {
-      .content-auto {
-        content-visibility: auto;
-      }
-      .card-hover {
-        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-      }
-      .btn-download {
-        @apply bg-primary text-white px-4 py-2 rounded-lg transition-all duration-300 hover:bg-primary/90 active:scale-95 flex items-center gap-2;
-      }
-      .section-title {
-        @apply text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2 text-dark dark:text-light;
-      }
-      /* 动态背景画布样式，置底不遮挡内容 */
-      #bg-canvas {
-        @apply fixed top-0 left-0 w-full h-full z-[-1];
-      }
-      /* 模式切换按钮样式 */
-      .mode-toggle {
-        @apply w-10 h-10 rounded-full flex items-center justify-center text-xl cursor-pointer transition-all duration-300 hover:bg-gray-200 dark:hover:bg-gray-700;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人信息展示</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<!-- Tailwind 配置 -->
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#165DFF',
+secondary: '#36CFC9',
+accent: '#722ED1',
+neutral: '#F2F3F5',
+'neutral-dark': '#4E5969',
+'neutral-light': '#C9CDD4',
+},
+fontFamily: {
+inter: ['Inter', 'system-ui', 'sans-serif'],
+},
+maxWidth: {
+'screen-3xl': '2000px', // 新增更大容器宽度
+},
+fontSize: {
+'xl': '1.375rem', // 增加基础字体大小
+'2xl': '1.75rem',
+'3xl': '2.25rem',
+'4xl': '3rem',
+},
+},
+}
+}
+</script>
+
+<style type="text/tailwindcss">
+@layer utilities {
+.content-auto {
+content-visibility: auto;
+}
+.text-shadow {
+text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.transition-custom {
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover {
+@apply hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+}
+.grid-auto-fit {
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.iframe-container {
+width: 100%;
+height: 600px; /* 增加iframe高度 */
+overflow: auto;
+}
+}
+</style>
 </head>
-<!-- 基础样式：白天浅灰背景，黑夜深灰背景，过渡平滑 -->
-<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 relative overflow-x-hidden">
-  <!-- 保留原动态背景核心画布 -->
-  <canvas id="bg-canvas"></canvas>
 
-  <!-- 顶部导航 - 白天黑夜适配，添加模式切换按钮 -->
-  <header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm transition-all duration-300">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center gap-4">
-      <h1 class="text-xl md:text-2xl font-bold text-primary flex items-center gap-2 shrink-0">
-        <i class="fas fa-download"></i>叁土 软件分享
-      </h1>
-      <!-- 导航锚点 -->
-      <nav class="hidden md:flex gap-6 flex-1 justify-center">
-        <a href="#mobile" class="hover:text-primary transition-colors">手机端</a>
-        <a href="#pc" class="hover:text-primary transition-colors">电脑端</a>
-      </nav>
-      <!-- 右侧功能区：模式切换 + 移动端菜单 -->
-      <div class="flex items-center gap-2">
-        <!-- 白天黑夜模式切换按钮 -->
-        <div class="mode-toggle" id="modeToggle">
-          <i class="fas fa-sun dark:fa-moon"></i>
-        </div>
-        <!-- 移动端菜单按钮 -->
-        <button class="md:hidden text-2xl" id="menuBtn">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-    </div>
-    <!-- 移动端导航菜单 - 白天黑夜适配 -->
-    <div class="md:hidden hidden bg-white dark:bg-gray-800 shadow-md px-4 py-2 transition-all duration-300" id="mobileMenu">
-      <a href="#mobile" class="block py-2 hover:text-primary">手机端</a>
-      <a href="#pc" class="block py-2 hover:text-primary">电脑端</a>
-    </div>
-  </header>
+<body class="font-inter bg-gray-50 text-gray-800">
+<!-- 导航栏 -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm transition-all duration-300">
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="flex justify-between items-center py-3 md:py-4"> <!-- 减小垂直间距 -->
+<div class="flex items-center">
+<div class="text-primary font-bold text-xl">个人信息</div>
+</div>
+<nav class="hidden md:flex space-x-6 md:space-x-8"> <!-- 优化间距 -->
+<a href="#about" class="text-gray-600 hover:text-primary transition-custom font-medium">关于我</a>
+<a href="#skills" class="text-gray-600 hover:text-primary transition-custom font-medium">技能</a>
+<a href="#experience" class="text-gray-600 hover:text-primary transition-custom font-medium">工作经验</a>
+<a href="#projects" class="text-gray-600 hover:text-primary transition-custom font-medium">项目经历</a>
+<a href="#contact" class="text-gray-600 hover:text-primary transition-custom font-medium">联系方式</a>
+<a href="#maxkb" class="text-gray-600 hover:text-primary transition-custom font-medium">MaxKB</a> <!-- 新增导航项 -->
+</nav>
+<button class="md:hidden text-gray-600 focus:outline-none" id="mobile-menu-button">
+<i class="fa fa-bars text-xl"></i>
+</button>
+</div>
 
-  <main class="container mx-auto px-4 py-8 relative z-10">
-    <!-- 介绍区域 - 白天黑夜文字颜色适配 -->
-    <section class="mb-12 text-center">
-      <h1 class="text-3xl md:text-4xl font-bold mb-4 text-dark dark:text-white">叁土</h1>
-      <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        整理手机端、电脑端常用实用软件，点击即可下载安装包/压缩文件
-      </p>
-    </section>
+<!-- 移动端菜单 -->
+<div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
+<div class="max-w-screen-3xl mx-auto px-4 py-3 space-y-3"> <!-- 扩大容器宽度 -->
+<a href="#about" class="block text-gray-600 hover:text-primary py-2 transition-custom">关于我</a>
+<a href="#skills" class="block text-gray-600 hover:text-primary py-2 transition-custom">技能</a>
+<a href="#experience" class="block text-gray-600 hover:text-primary py-2 transition-custom">工作经验</a>
+<a href="#projects" class="block text-gray-600 hover:text-primary py-2 transition-custom">项目经历</a>
+<a href="#contact" class="block text-gray-600 hover:text-primary py-2 transition-custom">联系方式</a>
+<a href="#maxkb" class="block text-gray-600 hover:text-primary py-2 transition-custom">MaxKB</a> 
+</div>
+</div>
+</div>
+</header>
 
-    <!-- 手机端软件区域 - 卡片白天黑夜适配（无需修改，本身正常） -->
-    <section id="mobile" class="mb-16">
-      <h3 class="section-title">
-        <i class="fas fa-mobile-alt text-2xl"></i>手机端软件
-      </h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 全能扫描王 - 白天白色卡片，黑夜深色玻璃拟态 -->
-        <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-sm dark:border dark:border-gray-700/50 rounded-xl shadow p-6 card-hover">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 bg-primary/10 dark:bg-primary/10 rounded-full flex items-center justify-center text-primary text-2xl">
-              <i class="fas fa-scanner"></i>
-            </div>
-            <h4 class="text-lg font-semibold text-dark dark:text-white">扫描全能王</h4>
-          </div>
-          <p class="text-gray-600 dark:text-gray-400 text-sm mb-6">
-            手机端高效扫描工具，支持文档、照片扫描，OCR文字识别
-          </p>
-          <button class="btn-download w-full justify-center" 
-             data-download-url="https://www.jianguoyun.com/p/DRbQmYsQy-yBDhjmuqMGIAA">
-            <i class="fas fa-download"></i>
-            <span>立即下载</span>
-          </button>
-        </div>
+<main>
+<!-- 英雄区域 -->
+<section class="bg-gradient-to-br from-primary/90 to-primary py-12 md:py-16 lg:py-20"> <!-- 优化垂直间距 -->
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="flex flex-col md:flex-row items-center">
+<div class="w-full md:w-1/4 mb-6 md:mb-0"> <!-- 调整比例 -->
+<div class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto md:mx-0"> <!-- 优化头像尺寸 -->
+<img src="/fujian/santu.jpg" alt="个人头像" class="w-full h-full object-cover rounded-full shadow-2xl border-4 border-white/20">
+<div class="absolute -bottom-3 -right-3 bg-secondary text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
+<i class="fa fa-code text-lg"></i>
+</div>
+</div>
+</div>
+<div class="w-full md:w-3/4 text-center md:text-left">
+<h1 class="text-[clamp(1.8rem,4vw,3rem)] font-bold text-white leading-tight text-shadow mb-3"> <!-- 优化字体大小 -->
+你好，我是<span class="text-secondary">小蒙</span>
+</h1>
+<p class="text-[clamp(1rem,1.8vw,1.25rem)] text-white/90 mb-6 max-w-3xl mx-auto md:mx-0"> <!-- 优化字体大小 -->
+全栈开发者 | 热衷于创造实用且美观的数字产品 | NWNU计科专业
+</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-3"> <!-- 优化间距 -->
+<a href="#contact" class="bg-white text-primary hover:bg-gray-100 px-5 py-2.5 rounded-full font-medium shadow-lg hover:shadow-xl transition-custom flex items-center">
+<i class="fa fa-envelope-o mr-2"></i> 联系我
+</a>
+<a href="#projects" class="bg-transparent border-2 border-white text-white hover:bg-white/10 px-5 py-2.5 rounded-full font-medium transition-custom flex items-center">
+<i class="fa fa-briefcase mr-2"></i> 查看项目
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-   <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-sm dark:border dark:border-gray-700/50 rounded-xl shadow p-6 card-hover">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 bg-primary/10 dark:bg-primary/10 rounded-full flex items-center justify-center text-primary text-2xl">
-              <i class="fas fa-cloud"></i>
-            </div>
-            <h4 class="text-lg font-semibold text-dark dark:text-white">百度网盘</h4>
-          </div>
-          <p class="text-gray-600 dark:text-gray-400 text-sm mb-6">
-            手机端高效网盘工具，超清倍速版
-          </p>
-          <button class="btn-download w-full justify-center" 
-             data-download-url="https://www.jianguoyun.com/p/DRbQmYsQy-yBDhjmuqMGIAA">
-            <i class="fas fa-download"></i>
-            <span>立即下载</span>
-          </button>
-        </div>
+<!-- 关于我 -->
+<section id="about" class="py-12 md:py-16 bg-white"> <!-- 优化垂直间距 -->
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
+<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">关于我</h2> <!-- 优化字体大小 -->
+<div class="w-20 h-1 bg-primary mx-auto"></div>
+</div>
 
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center"> <!-- 优化网格和间距 -->
+<div class="order-2 lg:order-1">
+<h3 class="text-xl font-semibold text-gray-800 mb-3">全栈开发者，专注于创造优质用户体验</h3>
+<p class="text-gray-600 mb-3 leading-relaxed">
+我是一名拥有浓厚兴趣的全栈开发者，擅长前后端技术栈。我热衷于将复杂问题简化为优雅、直观的解决方案。
+</p>
+<p class="text-gray-600 mb-5 leading-relaxed">
+我相信优秀的产品不仅要功能强大，还要美观易用。我注重代码质量和用户体验，致力于创造既实用又具有视觉吸引力的数字产品。
+</p>
 
-      </div>
-    </section>
+<div class="grid grid-cols-2 gap-3 mb-6"> <!-- 优化网格和间距 -->
+<div class="flex items-center">
+<i class="fa fa-calendar text-primary mr-3 text-lg"></i>
+<span>2025年5月</span>
+</div>
+<div class="flex items-center">
+<i class="fa fa-map-marker text-primary mr-3 text-lg"></i>
+<span>甘肃.兰州</span>
+</div>
+<div class="flex items-center">
+<i class="fa fa-envelope text-primary mr-3 text-lg"></i>
+<span>2739904006@qq.com</span>
+</div>
+<div class="flex items-center">
+<i class="fa fa-phone text-primary mr-3 text-lg"></i>
+<span>+86 18794875212</span>
+</div>
+</div>
 
-    <!-- 电脑端软件区域 - 动态生成卡片，白天黑夜适配 -->
-    <section id="pc">
-      <h3 class="section-title">
-        <i class="fas fa-desktop text-2xl"></i>电脑端软件
-      </h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="pcContainer">
-        <!-- 由JS动态生成卡片 -->
-      </div>
-    </section>
-  </main>
+<div class="flex flex-wrap gap-3"> <!-- 优化间距 -->
+<a href="#" class="bg-[#1877F2] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
+<i class="fa fa-facebook"></i>
+</a>
+<a href="#" class="bg-[#1DA1F2] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
+<i class="fa fa-twitter"></i>
+</a>
+<a href="#" class="bg-[#0A66C2] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
+<i class="fa fa-linkedin"></i>
+</a>
+<a href="#" class="bg-[#333333] text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-custom">
+<i class="fa fa-github"></i>
+</a>
+</div>
+</div>
 
-  <!-- 底部信息 - 白天黑夜适配 -->
-  <footer class="bg-gray-100 dark:bg-gray-800/80 text-dark dark:text-light py-8 mt-12 relative z-10 transition-colors duration-300">
-    <div class="container mx-auto px-4 text-center">
-      <p class="mb-2">叁土--精选实用软件合集</p>
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        所有软件仅作学习交流使用，请支持正版软件
-      </p>
-    </div>
-  </footer>
+<div class="order-1 lg:order-2 relative">
+<div class="relative z-10 rounded-lg overflow-hidden shadow-xl">
+<img src="https://picsum.photos/id/1015/600/700" alt="个人照片" class="w-full h-auto">
+</div>
+<div class="absolute top-5 right-5 w-56 h-56 bg-primary/10 rounded-full -z-10"></div>
+<div class="absolute bottom-5 left-5 w-40 h-40 bg-secondary/10 rounded-full -z-10"></div>
+</div>
+</div>
+</div>
+</section>
 
-  <script>
-    // --- 动态背景逻辑（新增：粒子颜色随白天黑夜模式变化）--- 开始
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
+<!-- MaxKB 区域 -->
+<section id="maxkb" class="py-12 md:py-16 bg-neutral"> <!-- 优化垂直间距 -->
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
+<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">MaxKB界面</h2> <!-- 优化字体大小 -->
+<div class="w-20 h-1 bg-primary mx-auto"></div>
+</div>
 
-    function initCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
+<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+<div class="p-4 bg-gray-800 text-white flex justify-between items-center">
+<h3 class="font-medium">MaxKB应用</h3>
+<div class="flex space-x-2">
+<button class="w-3 h-3 rounded-full bg-red-500"></button>
+<button class="w-3 h-3 rounded-full bg-yellow-500"></button>
+<button class="w-3 h-3 rounded-full bg-green-500"></button>
+</div>
+</div>
+<div class="iframe-container">
+<iframe
+              src=" https://e3b3-2409-8975-67a-42c-3953-b528-9bf2-8484.ngrok-free.app/ui/chat/d58f668afa5ef9c9?mode=mobile"
+              src="https://fed2-2409-8975-684-8602-8c78-9f7a-b6a8-6ac6.ngrok-free.app/ui/chat/d58f668afa5ef9c9?mode=mobile"
+style="width: 100%; height: 100%;"
+frameborder="0"
+allow="microphone"
+></iframe>
+</div>
+<div class="p-4 bg-gray-100 text-center text-sm text-gray-600">
+<p>如果界面显示不完全，请尝试使用右侧滚动条查看全部内容。</p>
+</div>
+</div>
+</div>
+</section>
 
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
-            this.radius = Math.random() * 2;
-        }
-        draw() {
-            // 关键：白天粒子为浅蓝灰色，黑夜为白色，适配视觉
-            const isDark = document.documentElement.classList.contains('dark');
-            const particleColor = isDark 
-              ? "rgba(255, 255, 255, 0.5)" 
-              : "rgba(22, 93, 255, 0.4)"; // 主色调浅蓝，适配白天
-            ctx.fillStyle = particleColor;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-        }
-    }
+<!-- 技能 -->
+<section id="skills" class="py-12 md:py-16 bg-neutral"> <!-- 优化垂直间距 -->
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
+<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">专业技能</h2> <!-- 优化字体大小 -->
+<div class="w-20 h-1 bg-primary mx-auto"></div>
+</div>
 
-    function createParticles() {
-        const count = Math.floor(window.innerWidth / 10);
-        for (let i = 0; i < count; i++) particles.push(new Particle());
-    }
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"> <!-- 优化网格和间距 -->
+<!-- 前端技能 -->
+<div class="bg-white rounded-xl shadow-md p-6 md:p-8 card-hover"> <!-- 优化内边距 -->
+<div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-5"> <!-- 优化图标容器 -->
+<i class="fa fa-code text-primary text-xl"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800 mb-3">前端开发</h3>
+<div class="space-y-3"> <!-- 优化间距 -->
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">HTML5</span>
+<span>95%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-primary rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">JavaScript</span>
+<span>90%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-primary rounded-full" style="width: 90%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">React</span>
+<span>85%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Vue.js</span>
+<span>75%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-primary rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Tailwind CSS</span>
+<span>90%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-primary rounded-full" style="width: 90%"></div>
+</div>
+</div>
+</div>
+</div>
 
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p, i) => {
-            p.update();
-            p.draw();
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = p.x - particles[j].x;
-                const dy = p.y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 100) {
-                    // 粒子连线颜色也随模式变化
-                    const isDark = document.documentElement.classList.contains('dark');
-                    const lineColor = isDark 
-                      ? `rgba(255, 255, 255, ${1 - dist / 100})` 
-                      : `rgba(22, 93, 255, ${0.8 - dist / 100})`;
-                    ctx.strokeStyle = lineColor;
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        });
-        requestAnimationFrame(animate);
-    }
+<!-- 后端技能 -->
+<div class="bg-white rounded-xl shadow-md p-6 md:p-8 card-hover"> <!-- 优化内边距 -->
+<div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mb-5"> <!-- 优化图标容器 -->
+<i class="fa fa-server text-secondary text-xl"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800 mb-3">后端开发</h3>
+<div class="space-y-3"> <!-- 优化间距 -->
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Node.js</span>
+<span>85%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Python (Flask/Django)</span>
+<span>80%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-secondary rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">RESTful API</span>
+<span>90%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-secondary rounded-full" style="width: 90%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">数据库 (MySQL/MongoDB)</span>
+<span>85%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Express.js</span>
+<span>85%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-secondary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</div>
 
-    window.addEventListener('resize', initCanvas);
-    initCanvas();
-    createParticles();
-    animate();
-    // --- 动态背景逻辑结束 ---
+<!-- 其他技能 -->
+<div class="bg-white rounded-xl shadow-md p-6 md:p-8 card-hover"> <!-- 优化内边距 -->
+<div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mb-5"> <!-- 优化图标容器 -->
+<i class="fa fa-cogs text-accent text-xl"></i>
+</div>
+<h3 class="text-xl font-semibold text-gray-800 mb-3">其他技能</h3>
+<div class="space-y-3"> <!-- 优化间距 -->
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Git & GitHub</span>
+<span>90%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-accent rounded-full" style="width: 90%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Webpack & Babel</span>
+<span>80%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-accent rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">Docker</span>
+<span>70%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-accent rounded-full" style="width: 70%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">UI/UX 设计基础</span>
+<span>75%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-accent rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-medium">敏捷开发</span>
+<span>85%</span>
+</div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"> <!-- 优化进度条高度 -->
+<div class="h-full bg-accent rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-    // --- 核心：白天黑夜模式切换逻辑 --- 开始
-    const modeToggle = document.getElementById('modeToggle');
-    const htmlElement = document.documentElement;
-    const MODE_KEY = 'app-color-mode'; // 本地存储键名
+<!-- 工作经验 -->
+<section id="experience" class="py-12 md:py-16 bg-white"> <!-- 优化垂直间距 -->
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
+<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">工作经验</h2> <!-- 优化字体大小 -->
+<div class="w-20 h-1 bg-primary mx-auto"></div>
+</div>
 
-    // 1. 初始化模式：优先本地存储 → 系统偏好 → 默认黑夜
-    function initMode() {
-      const savedMode = localStorage.getItem(MODE_KEY);
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      if (savedMode) {
-        htmlElement.classList.toggle('dark', savedMode === 'dark');
-      } else {
-        htmlElement.classList.toggle('dark', systemPrefersDark);
-      }
-    }
+<div class="relative">
+<!-- 垂直线 -->
+<div class="absolute left-0 md:left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 transform md:-translate-x-1/2"></div>
 
-    // 2. 切换模式：更新class + 保存到本地存储 + 刷新粒子背景（视觉即时变化）
-    function toggleMode() {
-      const isDark = htmlElement.classList.contains('dark');
-      // 切换dark类
-      htmlElement.classList.toggle('dark');
-      // 保存到本地存储
-      localStorage.setItem(MODE_KEY, isDark ? 'light' : 'dark');
-      // 重新初始化画布，粒子颜色即时变化
-      initCanvas();
-    }
+<!-- 经验项1 -->
+<div class="mb-10 relative"> <!-- 优化间距 -->
+<div class="flex flex-col md:flex-row items-center">
+<div class="w-full md:w-1/2 md:pr-8 md:text-right order-2 md:order-1 mt-4 md:mt-0"> <!-- 优化间距 -->
+<h3 class="text-xl font-semibold text-gray-800 mb-1.5">高级全栈开发工程师</h3>
+<p class="text-primary font-medium mb-1.5">科技有限公司</p>
+<p class="text-gray-500 mb-2.5">2020年3月 - 至今</p>
+<p class="text-gray-600 text-sm md:text-base"> <!-- 优化字体大小 -->
+负责公司核心产品的前后端开发与维护，带领团队完成多个重要项目。主导技术选型和架构设计，优化系统性能，提升用户体验。
+</p>
+</div>
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center z-10 transform md:-translate-x-1/2 order-1 md:order-2"> <!-- 优化图标大小 -->
+<div class="w-3 h-3 rounded-full bg-white"></div>
+</div>
+<div class="w-full md:w-1/2 md:pl-8 hidden md:block order-3"></div> <!-- 优化间距 -->
+</div>
+</div>
 
-    // 3. 绑定切换事件
-    modeToggle.addEventListener('click', toggleMode);
+<!-- 经验项2 -->
+<div class="mb-10 relative"> <!-- 优化间距 -->
+<div class="flex flex-col md:flex-row items-center">
+<div class="w-full md:w-1/2 md:pr-8 hidden md:block order-1"></div> <!-- 优化间距 -->
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center z-10 transform md:-translate-x-1/2 order-2"></div> <!-- 优化图标大小 -->
+<div class="w-full md:w-1/2 md:pl-8 order-3 mt-4 md:mt-0"> <!-- 优化间距 -->
+<h3 class="text-xl font-semibold text-gray-800 mb-1.5">全栈开发工程师</h3>
+<p class="text-primary font-medium mb-1.5">互联网公司</p>
+<p class="text-gray-500 mb-2.5">2017年6月 - 2020年2月</p>
+<p class="text-gray-600 text-sm md:text-base"> <!-- 优化字体大小 -->
+参与电商平台和企业管理系统的开发，负责前后端功能实现和API设计。与UI/UX团队合作，确保产品视觉效果和用户体验。
+</p>
+</div>
+</div>
+</div>
 
-    // 4. 页面加载时初始化
-    initMode();
-    // --- 模式切换逻辑结束 ---
+<!-- 经验项3 -->
+<div class="relative">
+<div class="flex flex-col md:flex-row items-center">
+<div class="w-full md:w-1/2 md:pr-8 md:text-right order-2 md:order-1 mt-4 md:mt-0"> <!-- 优化间距 -->
+<h3 class="text-xl font-semibold text-gray-800 mb-1.5">前端开发工程师</h3>
+<p class="text-primary font-medium mb-1.5">软件公司</p>
+<p class="text-gray-500 mb-2.5">2015年9月 - 2017年5月</p>
+<p class="text-gray-600 text-sm md:text-base"> <!-- 优化字体大小 -->
+负责公司网站和Web应用的前端开发，实现响应式设计和交互效果。优化前端性能，解决跨浏览器兼容性问题。
+</p>
+</div>
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center z-10 transform md:-translate-x-1/2 order-1 md:order-2"> <!-- 优化图标大小 -->
+<div class="w-3 h-3 rounded-full bg-white"></div>
+</div>
+<div class="w-full md:w-1/2 md:pl-8 hidden md:block order-3"></div> <!-- 优化间距 -->
+</div>
+</div>
+</div>
+</div>
+</section>
 
-    // --- 原有所有交互逻辑（完整保留，修复2处关键问题）--- 开始
-    // 移动端菜单切换
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-      const icon = menuBtn.querySelector('i');
-      icon.classList.toggle('fa-bars');
-      icon.classList.toggle('fa-times');
-    });
+<!-- 项目经历 -->
+<section id="projects" class="py-12 md:py-16 bg-neutral"> <!-- 优化垂直间距 -->
+<div class="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- 扩大容器宽度 -->
+<div class="text-center mb-10 md:mb-12"> <!-- 优化间距 -->
+<h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-gray-800 mb-3">项目经历</h2> <!-- 优化字体大小 -->
+<div class="w-20 h-1 bg-primary mx-auto"></div>
+</div>
 
-    // 平滑滚动（锚点跳转）
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          window.scrollTo({
-            top: targetElement.offsetTop - 80,
-            behavior: 'smooth'
-          });
-          // 关闭移动端菜单
-          mobileMenu.classList.add('hidden');
-          const icon = menuBtn.querySelector('i');
-          icon.classList.remove('fa-times');
-          icon.classList.add('fa-bars');
-        }
-      });
-    });
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"> <!-- 优化网格和间距 -->
+<!-- 项目1 -->
+<div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+<div class="relative h-40 sm:h-48"> <!-- 优化图片高度 -->
+<img src="https://picsum.photos/id/0/600/400" alt="电商平台" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+<div class="p-3"> <!-- 优化内边距 -->
+<span class="bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded">React</span>
+<span class="bg-secondary text-white text-xs font-semibold px-2 py-0.5 rounded ml-1.5">Node.js</span>
+</div>
+</div>
+</div>
+<div class="p-5"> <!-- 优化内边距 -->
+<h3 class="text-lg font-semibold text-gray-800 mb-2">电商平台</h3>
+<p class="text-gray-600 text-sm mb-3 leading-relaxed"> <!-- 优化字体大小 -->
+一个现代化的电商平台，支持商品浏览、购物车、支付流程等功能。采用React和Node.js技术栈，实现了响应式设计和流畅的用户体验。
+</p>
+<div class="flex justify-between items-center">
+<span class="text-xs text-gray-500">2021年 - 至今</span>
+<a href="#" class="text-primary text-sm font-medium hover:underline flex items-center">
+查看详情 <i class="fa fa-arrow-right ml-1"></i>
+</a>
+</div>
+</div>
+</div>
 
-    // ✅ 修复点1：改为【事件委托】，绑定到document，适配动态生成的下载按钮（手机+电脑端都生效）
-    // 原代码只绑定初始DOM按钮，动态生成的电脑端按钮无事件，事件委托可解决所有动态元素绑定问题
-    document.addEventListener('click', function (e) {
-      // 判断点击的是下载按钮
-      if (e.target.closest('.btn-download')) {
-        const btn = e.target.closest('.btn-download');
-        const downloadUrl = btn.getAttribute('data-download-url');
-        const originalHtml = btn.innerHTML;
-        // 按钮加载状态
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>正在下载...</span>';
-        btn.disabled = true;
+<!-- 项目2 -->
+<div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+<div class="relative h-40 sm:h-48"> <!-- 优化图片高度 -->
+<img src="https://picsum.photos/id/180/600/400" alt="企业管理系统" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+<div class="p-3"> <!-- 优化内边距 -->
+<span class="bg-vue text-white text-xs font-semibold px-2 py-0.5 rounded">Vue.js</span>
+<span class="bg-express text-white text-xs font-semibold px-2 py-0.5 rounded ml-1.5">Express</span>
+</div>
+</div>
+</div>
+<div class="p-5"> <!-- 优化内边距 -->
+<h3 class="text-lg font-semibold text-gray-800 mb-2">企业管理系统</h3>
+<p class="text-gray-600 text-sm mb-3 leading-relaxed"> <!-- 优化字体大小 -->
+为中小型企业设计的综合管理系统，包括人力资源、财务管理、项目管理等模块。提供数据可视化和报表功能，帮助企业提高管理效率。
+</p>
+<div class="flex justify-between items-center">
+<span class="text-xs text-gray-500">2020年 - 2021年</span>
+<a href="#" class="text-primary text-sm font-medium hover:underline flex items-center">
+查看详情 <i class="fa fa-arrow-right ml-1"></i>
+</a>
+</div>
+</div>
+</div>
 
-        // 模拟下载延迟，新标签页打开坚果云链接
-        setTimeout(() => {
-          window.open(downloadUrl, '_blank');
-          // 恢复按钮状态
-          btn.innerHTML = originalHtml;
-          btn.disabled = false;
-        }, 800);
-      }
-    });
-
-    // ✅ 修复点2：删除滚动导航栏代码中的多余字符S，解决JS语法报错
-    window.addEventListener('scroll', () => {
-      const header = document.querySelector('header');
-      if (window.scrollY > 50) {
-        header.classList.add('shadow'); // 已删除多余的S
-      } else {
-        header.classList.remove('shadow');
-      }
-    });
-
- 
-    const pcApps = [
-      { name: "网易有道翻译", icon: "fa-language", desc: "多功能翻译工具，支持多语言互译、截图翻译、文档翻译", url: "https://www.jianguoyun.com/p/DZvk9hsQy-yBDhiEu6MGIAA" },
-      { name: "DPaste--剪贴板", icon: "fa-clipboard", desc: "高效剪贴板工具，支持多内容保存、快速粘贴、跨设备同步", url: "https://d-paste.com/cn/download" },
-      { name: "Dev C++", icon: "fa-code", desc: "轻量级C/C++编译器，适合初学者，界面简洁、操作便捷", url: "https://www.jianguoyun.com/p/DYl1bVQQy-yBDhiFu6MGIAA" },
-      { name: "Code Blocks", icon: "fa-code-branch", desc: "开源跨平台C/C++ IDE，支持多编译器，插件扩展丰富", url: "https://www.jianguoyun.com/p/【你的Code Blocks坚果云链接】" }, // 替换为自己的链接
-      { name: "WIN RAR", icon: "fa-file-archive", desc: "经典压缩解压工具，支持RAR、ZIP等多种格式，压缩率高", url: "https://www.jianguoyun.com/p/DQoECVoQy-yBDhiHu6MGIAA" },
-      { name: "7-zip", icon: "fa-compress", desc: "开源免费压缩工具，支持超高压缩率，兼容所有主流格式", url: "https://www.jianguoyun.com/p/【你的7-zip坚果云链接】" }, // 替换为自己的链接
-      { name: "openspeed", icon: "fa-tachometer-alt", desc: "网络测速工具，精准测试网速、延迟、丢包率，操作简单", url: "https://www.jianguoyun.com/p/DeofkMAQy-yBDhiIu6MGIAA" },
-      { name: "Adobe Dreamweaver CS6", icon: "fa-code", desc: "专业网页设计与开发工具，可视化编辑，支持多语言开发", url: "https://www.jianguoyun.com/p/DZ3Of7AQy-yBDhiLu6MGIAA" },
-      { name: "DiskGenius64_NSIS", icon: "fa-hdd", desc: "专业磁盘分区工具，支持分区管理、数据恢复、磁盘克隆", url: "https://www.jianguoyun.com/p/DftwOC0Qy-yBDhiJu6MGIAA" },
-      { name: "Proteus 8 Professional", icon: "fa-microchip", desc: "单片机仿真与PCB设计工具，电子工程必备开发软件", url: "https://www.jianguoyun.com/p/DZq8vsMQy-yBDhiMu6MGIAA" }
-    ];
-    
-    const pcContainer = document.getElementById('pcContainer');
-    // 动态生成白天黑夜适配的电脑端软件卡片
-    pcApps.forEach(app => {
-      pcContainer.innerHTML += `
-        <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-sm dark:border dark:border-gray-700/50 rounded-xl shadow p-6 card-hover transition-all duration-300">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary text-2xl">
-              <i class="fas ${app.icon}"></i>
-            </div>
-            <h4 class="text-lg font-semibold text-dark dark:text-white">${app.name}</h4>
-          </div>
-          <p class="text-gray-600 dark:text-gray-400 text-sm mb-6">${app.desc}</p>
-          <button class="btn-download w-full justify-center" data-download-url="${app.url}">
-            <i class="fas fa-download"></i>
-            <span>立即下载</span>
-          </button>
-        </div>
-      `;
-    });
-    // --- 原有交互逻辑结束 ---
-  </script>
-</body>
-</html>
